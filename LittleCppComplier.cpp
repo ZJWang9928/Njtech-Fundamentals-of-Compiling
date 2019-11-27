@@ -354,7 +354,12 @@ void parse_LOOP_SEN() {
     parse_SEN_ONE();
     int loop_pos = loop_stack.top();
     loop_stack.pop();
-    qua[loop_pos].res = "(" + to_string(qua_num+1) + ")";
+    qua[loop_pos].res = "(" + to_string(qua_num+2) + ")";
+    qua[qua_num].op = "GOTO";
+    qua[qua_num].arg1 = "";
+    qua[qua_num].arg2 = "";
+    qua[qua_num].res = "(" + to_string(loop_pos+1) + ")";
+    qua_num++;
     qua[qua_num].op = "";
     qua[qua_num].arg1 = "";
     qua[qua_num].arg2 = "";
