@@ -92,6 +92,8 @@ int lookahead_type;     // type of current word
 string var[200];
 int var_num = 0;
 int tmpvar_num = 0;
+int follow_loop = 0;
+bool have_loop = false;
 stack<int> condition_stack;
 stack<int> loop_stack;
 
@@ -357,7 +359,9 @@ void parse_LOOP_SEN() {
     qua[qua_num].arg1 = "";
     qua[qua_num].arg2 = "";
     qua[qua_num].res = "";
-    qua_num++;
+    // qua_num++;
+    follow_loop = qua_num;
+    have_loop = true;
 }
 
 void parse_CONDITION_SEN() {
@@ -716,18 +720,28 @@ int main() {
     take_word();
     lookahead_type = next_word.type;
     parse_PROGRAM();
+
+    int k = 0;
     cout << endl;
     cout << "No.\tOP\tARG1\tARG2\tRES" << endl;
-    for (int k = 0; k < qua_num; k++) {
+    for (k = 0; k < qua_num; k++) {
         cout << "[" << k+1 << "]\t" << qua[k].op << "\t" << qua[k].arg1 << "\t" << qua[k].arg2 << "\t" << qua[k].res << "\t" << endl;
     }
+    if (have_loop && follow_loop == k) {
+        cout << "[" << k+1 << "]\t" << "" << "\t" << "" << "\t" << "" << "\t" << "" << "\t" << endl;
+    }
+    // cout << follow_loop << endl << k << endl;
 
     ofstream out_file;
     out_file.open("out.txt");
     out_file << "No.\tOP\tARG1\tARG2\tRES" << endl;
-    for (int k = 0; k < qua_num; k++) {
+    for (k = 0; k < qua_num; k++) {
         out_file << "[" << k+1 << "]\t" << qua[k].op << "\t" << qua[k].arg1 << "\t" << qua[k].arg2 << "\t" << qua[k].res << "\t" << endl;
     }
+    if (have_loop && follow_loop == k) {
+        out_file << "[" << k+1 << "]\t" << "" << "\t" << "" << "\t" << "" << "\t" << "" << "\t" << endl;
+    }
+
 
     return 0;
 }
