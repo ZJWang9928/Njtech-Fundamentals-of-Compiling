@@ -95,6 +95,7 @@ int tmpvar_num = 0;
 int follow_loop = 0;
 bool have_loop = false;
 stack<int> condition_stack;
+stack<int> else_stack;
 stack<int> loop_stack;
 
 
@@ -404,11 +405,21 @@ void parse_CONDITION_SEN() {
     qua_num++;
     match_word(ID_RPAREN);
     parse_SEN_ONE();
+    qua[qua_num].op = "GOTO";
+    qua[qua_num].arg1 = "";
+    qua[qua_num].arg2 = "";
+    else_stack.push(qua_num);
+    qua_num++;
     match_word(ID_ELSE);
     int condition_pos = condition_stack.top();
     condition_stack.pop();
     qua[condition_pos].res = "(" + to_string(qua_num+1) + ")";
     parse_SEN_ONE();
+    int else_num = else_stack.top();
+    else_stack.pop();
+    qua[else_num].res = "(" + to_string(qua_num+1) + ")";
+    have_loop = true;
+    follow_loop = qua_num;
 }
 
 void parse_MULTISEN(){
@@ -427,7 +438,9 @@ void parse_SEN_ONE() {
              lookahead_type == ID_WHILE) {
         parse_SEN();
     }else{
-        cout << "syntax error" << endl;
+        cout << "******************** Error *******************" << endl;
+        cout << "Line " << cur_line << ": " << endl;
+        cout << "Not a sentence!" << endl;
         exit(0);
     }
 }
@@ -457,7 +470,9 @@ pair<string, int> parse_FACTOR() {
         ret.second = 1;
         match_word(ID_RPAREN);
     }else{
-        cout << "syntax error" << endl;
+        cout << "******************** Error *******************" << endl;
+        cout << "Line " << cur_line << ": " << endl;
+        cout << "Not a factor!" << endl;
         exit(0);
     }
     return ret;
@@ -587,7 +602,9 @@ int parse_RELATION_OPT() {
     if (lookahead_type != ID_EQ && lookahead_type != ID_NE 
     &&  lookahead_type != ID_GT && lookahead_type != ID_LT
     &&  lookahead_type != ID_GE && lookahead_type != ID_LE) {
-        cout << "syntax error" << endl;
+        cout << "******************** Error *******************" << endl;
+        cout << "Line " << next_word.line << ": " << endl;
+        cout << "Not a relation operator!" << endl;
         exit(0);
     }else{
         ropt_type = lookahead_type;
@@ -637,7 +654,9 @@ void parse_SEN() {
     }else if(lookahead_type == ID_IDENTIFIER) {
         parse_ASSIGN_SEN();
     }else{
-        cout << "syntax error" << endl;
+        cout << "******************** Error *******************" << endl;
+        cout << "Line " << next_word.line << ": " << endl;
+        cout << "Not a sentence!" << endl;
         exit(0);
     }
 }
