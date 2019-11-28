@@ -472,7 +472,7 @@ pair<string, int> parse_FACTOR() {
     }else{
         cout << "******************** Error *******************" << endl;
         cout << "Line " << cur_line << ": " << endl;
-        cout << "Not a factor!" << endl;
+        cout << "Not a factor! Must be a identifier, a constant or an expression!" << endl;
         exit(0);
     }
     return ret;
