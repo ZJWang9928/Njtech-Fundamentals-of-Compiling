@@ -1,4 +1,4 @@
-/* @Author: Jonathan Wang
+/* @Author: Jonathan Wang 
  * @Date: 27th Nov., 2019
  * @Developing Environment: Manjaro 18.1.3 Juhraya
  * */
@@ -97,6 +97,7 @@ bool have_loop = false;
 stack<int> condition_stack;
 stack<int> else_stack;
 stack<int> loop_stack;
+bool have_error = false;
 
 
 /************************* Lexical Analysis *************************/
@@ -232,6 +233,7 @@ void take_word() {
             default:
                 // cout << "@line: " << cur_line << "type error" << endl;
                 // exit(0);
+                have_error = true;
                 break;
         }
     }
@@ -250,7 +252,9 @@ void match_word(int expected_type) {
             cout << "\"" <<error_check[expected_type] << "\"";
         }
         cout << ", but get \"" << next_word.value << "\"." << endl;
-        exit(0);
+        // exit(0);
+        have_error = true;
+        cout << "******************** Error *******************" << endl;
     }else {
         take_word();
         lookahead_type = next_word.type;
@@ -313,7 +317,9 @@ void parse_IDENTIFIER() {
         cout << "******************** Error *******************" << endl;
         cout << "Line " << next_word.line << ": " << endl;
         cout << "Wrong identifier " << next_word.value << endl;
-        exit(0);
+        // exit(0);
+        have_error = true;
+        cout << "******************** Error *******************" << endl;
     }
 }
 
@@ -342,8 +348,11 @@ void parse_LOOP_SEN() {
             qua[qua_num].op = ">";
             break;
         default:
+            cout << "******************** Error *******************" << endl;
             cout << "Unknown Error!" << endl;
-            exit(0);
+            // exit(0);
+            have_error = true;
+            cout << "******************** Error *******************" << endl;
             break;
     }
     qua[qua_num].arg1 = args.second.first;
@@ -395,8 +404,11 @@ void parse_CONDITION_SEN() {
             qua[qua_num].op = ">";
             break;
         default:
+            cout << "******************** Error *******************" << endl;
             cout << "Unknown Error!" << endl;
-            exit(0);
+            // exit(0);
+            have_error = true;
+            cout << "******************** Error *******************" << endl;
             break;
     }
     qua[qua_num].arg1 = args.second.first;
@@ -441,7 +453,9 @@ void parse_SEN_ONE() {
         cout << "******************** Error *******************" << endl;
         cout << "Line " << cur_line << ": " << endl;
         cout << "Not a sentence!" << endl;
-        exit(0);
+        // exit(0);
+        have_error = true;
+        cout << "******************** Error *******************" << endl;
     }
 }
 
@@ -453,7 +467,9 @@ pair<string, int> parse_FACTOR() {
             cout << "******************** Error *******************" << endl;
             cout << "Line " << next_word.line << ": " << endl;
             cout << "Undeclared identifier " << next_word.value << endl;
-            exit(0);
+            // exit(0);
+            have_error = true;
+            cout << "******************** Error *******************" << endl;
         }
         ret.first = next_word.value;
         ret.second = 1;
@@ -473,7 +489,9 @@ pair<string, int> parse_FACTOR() {
         cout << "******************** Error *******************" << endl;
         cout << "Line " << cur_line << ": " << endl;
         cout << "Not a factor! Must be a identifier, a constant or an expression!" << endl;
-        exit(0);
+        // exit(0);
+        have_error = true;
+        cout << "******************** Error *******************" << endl;
     }
     return ret;
 }
@@ -605,7 +623,9 @@ int parse_RELATION_OPT() {
         cout << "******************** Error *******************" << endl;
         cout << "Line " << next_word.line << ": " << endl;
         cout << "Not a relation operator!" << endl;
-        exit(0);
+        // exit(0);
+        have_error = true;
+        cout << "******************** Error *******************" << endl;
     }else{
         ropt_type = lookahead_type;
         take_word();
@@ -632,7 +652,9 @@ void parse_ASSIGN_SEN() {
         cout << "******************** Error *******************" << endl;
         cout << "Line " << next_word.line << ": " << endl;
         cout << "Undeclared identifier " << next_word.value << endl;
-        exit(0);
+        // exit(0);
+        have_error = true;
+        cout << "******************** Error *******************" << endl;
     }
     string temp_identifier = next_word.value;
     parse_IDENTIFIER();
@@ -657,7 +679,9 @@ void parse_SEN() {
         cout << "******************** Error *******************" << endl;
         cout << "Line " << next_word.line << ": " << endl;
         cout << "Not a sentence!" << endl;
-        exit(0);
+        // exit(0);
+        have_error = true;
+        cout << "******************** Error *******************" << endl;
     }
 }
 
@@ -720,6 +744,10 @@ void parse_PROGRAM() {
    match_word(ID_LBRACE);
    parse_MAIN_FUNC();
    match_word(ID_RBRACE);
+   if (have_error) {
+       cout << "Have Error!!!" << endl;
+       exit(0);
+   }
    cout << "OK!" << endl;
 }
 
