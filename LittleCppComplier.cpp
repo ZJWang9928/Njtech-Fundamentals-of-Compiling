@@ -1,4 +1,4 @@
-/* @Author: Jonathan Wang 
+/* @Author: Jonathan Wang
  * @Date: 27th Nov., 2019
  * @Developing Environment: Manjaro 18.1.3 Juhraya
  * */
@@ -737,7 +737,7 @@ void parse_MAIN_FUNC() {
 }
 
 void parse_PROGRAM() {
-   cout << "Start Compiling..." << endl;
+   cout << endl << "Start Compiling..." << endl;
    match_word(ID_MAIN);
    match_word(ID_LPAREN);
    match_word(ID_RPAREN);
@@ -745,10 +745,10 @@ void parse_PROGRAM() {
    parse_MAIN_FUNC();
    match_word(ID_RBRACE);
    if (have_error) {
-       cout << "Have Error!!!" << endl;
+       cout << "==================== Have Error!!! ====================" << endl;
        exit(0);
    }
-   cout << "OK!" << endl;
+   cout << "==================== OK! ===================" << endl;
 }
 
 
@@ -761,7 +761,7 @@ int main() {
     while (~scanf("%c", &ch)) {
         letters[file_length++] = ch;
     }
-    cout << "file_length: " << file_length << endl;
+    cout << "File_length: " << file_length << endl;
     cur = 0;
     cur_line = 1;
     // while (cur != file_length) {
