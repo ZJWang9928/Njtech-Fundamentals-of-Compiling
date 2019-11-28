@@ -771,6 +771,7 @@ int main() {
 
     take_word();
     lookahead_type = next_word.type;
+
     parse_PROGRAM();
 
     int k = 0;
