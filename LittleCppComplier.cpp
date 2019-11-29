@@ -216,6 +216,13 @@ void take_word() {
                 if (is_reserved(s2)) {
                     next_word.type = is_reserved(s2);
                 }else{
+                    if (next_word.type == ID_CONSTANT) {
+                        cout << "******************** Error *******************" << endl;
+                        cout << "Line " << cur_line << ": " << endl;
+                        cout << "Identifier can not start with a digit!" << endl;
+                        have_error = true;
+                        cout << "******************** Error *******************" << endl;
+                    }
                     next_word.type = 24;
                 }
                 break;
