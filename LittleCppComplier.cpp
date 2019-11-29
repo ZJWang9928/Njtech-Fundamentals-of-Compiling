@@ -68,7 +68,7 @@ string reserved_words[6] = {"main", "int", "if", "else", "while", "do"};
 int reserved_nums[6] = {1, 2, 3, 4, 5, 6};
 string symbols[17] = {"+", "-", "*", "/", "<", ">", "!=", ">=", "<=", "==", ",", ";", "(", ")", "{", "}", "="};
 int symbol_nums[17] = {7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
-string error_check[25] = {"<Constant>", "main", "int", "if", "else", "while", "do", "+", "-", "*", "/", "<", ">", "!=", "<=", "==", ",", ";", "(", ")", "{", "}", "=", "<Identifier>"};
+string error_check[25] = {"<Constant>", "main", "int", "if", "else", "while", "do", "+", "-", "*", "/", "<", ">", "!=", ">=", "<=", "==", ",", ";", "(", ")", "{", "}", "=", "<Identifier>"};
 
 struct word {
     string value;
@@ -250,12 +250,14 @@ void match_word(int expected_type) {
         if (expected_type == 0 || expected_type == 24) {
             cout << error_check[expected_type] << " \"" << next_word.value << "\"";
         }else{
-            cout << "\"" <<error_check[expected_type] << "\"";
+            cout << "\"" << error_check[expected_type] << "\"";
         }
         cout << ", but get \"" << next_word.value << "\"." << endl;
         // exit(0);
         have_error = true;
         cout << "******************** Error *******************" << endl;
+        take_word();
+        lookahead_type = next_word.type;
     }else {
         take_word();
         lookahead_type = next_word.type;
@@ -351,7 +353,7 @@ void parse_LOOP_SEN() {
             break;
         default:
             cout << "******************** Error *******************" << endl;
-            cout << "Unknown Error!" << endl;
+            cout << "Not a relation operater!" << endl;
             // exit(0);
             have_error = true;
             cout << "******************** Error *******************" << endl;
