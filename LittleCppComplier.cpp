@@ -1,4 +1,4 @@
-/* @Author: Jonathan Wang
+/* @Author: 王子杰1401170224
  * @Date: 27th Nov., 2019
  * @Developing Environment: Manjaro 18.1.3 Juhraya
  * */
@@ -286,9 +286,9 @@ void parse_LOOP_SEN();
 void parse_CONDITION_SEN();
 void parse_SEN_ONE();
 void parse_MULTISEN();
-pair<string, int> parse_FACTOR();
-pair<string, int> parse_ITEM1(string arg1);
-pair<string, int> parse_ITEM();
+string parse_FACTOR();
+string parse_ITEM1(string arg1);
+string parse_ITEM();
 string parse_EXPRESSION1(string arg1);
 string parse_EXPRESSION();
 int parse_RELATION_OPT();
@@ -472,9 +472,9 @@ void parse_SEN_ONE() {
     }
 }
 
-pair<string, int> parse_FACTOR() {
+string parse_FACTOR() {
     cout << "parse_FACTOR" << endl;
-    pair<string, int> ret;
+    string ret;
     if (lookahead_type == ID_IDENTIFIER) {
         if (!is_exist_var(next_word.value)) {
             cout << "******************** Error *******************" << endl;
@@ -484,19 +484,16 @@ pair<string, int> parse_FACTOR() {
             have_error = true;
             cout << "******************** Error *******************" << endl;
         }
-        ret.first = next_word.value;
-        ret.second = 0;
+        ret = next_word.value;
         take_word();
         lookahead_type = next_word.type;
     }else if (lookahead_type == ID_CONSTANT) {
-        ret.first = next_word.value;
-        ret.second = 0;
+        ret = next_word.value;
         take_word();
         lookahead_type = next_word.type;
     }else if(lookahead_type == ID_LPAREN) {
         match_word(ID_LPAREN);
-        ret.first = parse_EXPRESSION();
-        ret.second = 0;
+        ret = parse_EXPRESSION();
         match_word(ID_RPAREN);
     }else{
         cout << "******************** Error *******************" << endl;
@@ -509,56 +506,36 @@ pair<string, int> parse_FACTOR() {
     return ret;
 }
 
-pair<string, int> parse_ITEM1(pair<string, int> arg1) {
+string parse_ITEM1(string arg1) {
     cout << "parse_ITEM1" << endl;
-    pair<string, int> ret = arg1;
-    pair<string, int> to_pass;
+    string ret = arg1;
+    string to_pass;
     if (lookahead_type == ID_MUL) {
         take_word();
         lookahead_type = next_word.type;
-        pair<string, int> arg2 = parse_FACTOR();
+        string arg2 = parse_FACTOR();
         qua[qua_num].op = "*";
-        qua[qua_num].arg1 = arg1.first;
-        qua[qua_num].arg2 = arg2.first;
-        if (arg1.second == 1) {
-            qua[qua_num].res = arg1.first;
-            ret.first = arg1.first;
-        }else if(arg1.second == 0 && arg2.second == 1){
-            qua[qua_num].res = arg2.first;
-            ret.first = arg2.first;
-        }else if(arg1.second == 0 && arg2.second == 0){
-            string var_name = "tmp" + to_string(tmpvar_num);
-            tmpvar_num++;
-            qua[qua_num].res = var_name;
-            ret.first = var_name;
-            to_pass.first = ret.first;
-            to_pass.second = 0;
-        }
-        // ret.second = 1;
+        qua[qua_num].arg1 = arg1;
+        qua[qua_num].arg2 = arg2;
+        string var_name = "tmp" + to_string(tmpvar_num);
+        tmpvar_num++;
+        qua[qua_num].res = var_name;
+        ret = var_name;
+        to_pass = ret;
         qua_num++;
         ret = parse_ITEM1(to_pass);
     }else if(lookahead_type == ID_DIV){
         take_word();
         lookahead_type = next_word.type;
-        pair<string, int> arg2 = parse_FACTOR();
+        string arg2 = parse_FACTOR();
         qua[qua_num].op = "/";
-        qua[qua_num].arg1 = arg1.first;
-        qua[qua_num].arg2 = arg2.first;
-        if (arg1.second == 1) {
-            qua[qua_num].res = arg1.first;
-            ret.first = arg1.first;
-        }else if(arg1.second == 0 && arg2.second == 1){
-            qua[qua_num].res = arg2.first;
-            ret.first = arg2.first;
-        }else if(arg1.second == 0 && arg2.second == 0){
-            string var_name = "tmp" + to_string(tmpvar_num);
-            tmpvar_num++;
-            qua[qua_num].res = var_name;
-            ret.first = var_name;
-            to_pass.first = ret.first;
-            to_pass.second = 0;
-        }
-        // ret.second = 1;
+        qua[qua_num].arg1 = arg1;
+        qua[qua_num].arg2 = arg2;
+        string var_name = "tmp" + to_string(tmpvar_num);
+        tmpvar_num++;
+        qua[qua_num].res = var_name;
+        ret = var_name;
+        to_pass = ret;
         qua_num++;
         ret = parse_ITEM1(to_pass);
     }else{
@@ -566,63 +543,43 @@ pair<string, int> parse_ITEM1(pair<string, int> arg1) {
     }
     return ret;
 }
-pair<string, int> parse_ITEM() {
+string parse_ITEM() {
     cout << "parse_ITEM" << endl;
-    pair<string, int> arg1 = parse_FACTOR();
-    pair<string, int> ret = parse_ITEM1(arg1);
+    string arg1 = parse_FACTOR();
+    string ret = parse_ITEM1(arg1);
     return ret;
 }
 
-string parse_EXPRESSION1(pair<string, int> arg1) {
+string parse_EXPRESSION1(string arg1) {
     cout << "parse_EXPRESSION1" << endl;
-    string ret = arg1.first;
-    pair<string, int> to_pass;
+    string ret = arg1;
+    string to_pass;
     if (lookahead_type == ID_PLUS) {
         take_word();
         lookahead_type = next_word.type;
-        pair<string, int> arg2 = parse_ITEM();
+        string arg2 = parse_ITEM();
         qua[qua_num].op = "+";
-        qua[qua_num].arg1 = arg1.first;
-        qua[qua_num].arg2 = arg2.first;
-        if (arg1.second == 1) {
-            qua[qua_num].res = arg1.first;
-            ret = arg1.first;
-        }
-        else if (arg1.second == 0 && arg2.second == 1) {
-            qua[qua_num].res = arg2.first;
-            ret = arg2.first;
-        }else if(arg1.second == 0 && arg2.second == 0) {
-            string var_name = "tmp" + to_string(tmpvar_num);
-            tmpvar_num++;
-            qua[qua_num].res = var_name;
-            ret = var_name;
-            to_pass.first = ret;
-            to_pass.second = 0;
-        }
+        qua[qua_num].arg1 = arg1;
+        qua[qua_num].arg2 = arg2;
+        string var_name = "tmp" + to_string(tmpvar_num);
+        tmpvar_num++;
+        qua[qua_num].res = var_name;
+        ret = var_name;
+        to_pass = ret;
         qua_num++;
         ret = parse_EXPRESSION1(to_pass);
     }else if(lookahead_type == ID_MINUS){
         take_word();
         lookahead_type = next_word.type;
-        pair<string, int> arg2 = parse_ITEM();
+        string arg2 = parse_ITEM();
         qua[qua_num].op = "-";
-        qua[qua_num].arg1 = arg1.first;
-        qua[qua_num].arg2 = arg2.first;
-        if (arg1.second == 1) {
-            qua[qua_num].res = arg1.first;
-            ret = arg1.first;
-        }
-        else if (arg1.second == 0 && arg2.second == 1) {
-            qua[qua_num].res = arg2.first;
-            ret = arg2.first;
-        }else if(arg1.second == 0 && arg2.second == 0) {
-            string var_name = "tmp" + to_string(tmpvar_num);
-            tmpvar_num++;
-            qua[qua_num].res = var_name;
-            ret = var_name;
-            to_pass.first = ret;
-            to_pass.second = 0;
-        }
+        qua[qua_num].arg1 = arg1;
+        qua[qua_num].arg2 = arg2;
+        string var_name = "tmp" + to_string(tmpvar_num);
+        tmpvar_num++;
+        qua[qua_num].res = var_name;
+        ret = var_name;
+        to_pass = ret;
         qua_num++;
         ret = parse_EXPRESSION1(to_pass);
     }else{
@@ -632,7 +589,7 @@ string parse_EXPRESSION1(pair<string, int> arg1) {
 }
 string parse_EXPRESSION() {
     cout << "parse_EXPRESSION" << endl;
-    pair<string,int> arg1 = parse_ITEM();
+    string arg1 = parse_ITEM();
     string ret = parse_EXPRESSION1(arg1);
     return ret;
 }
