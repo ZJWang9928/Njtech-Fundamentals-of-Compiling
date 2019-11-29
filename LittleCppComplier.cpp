@@ -97,6 +97,7 @@ bool have_loop = false;
 stack<int> condition_stack;
 stack<int> else_stack;
 stack<int> loop_stack;
+stack<int> loop_start_stack;
 bool have_error = false;
 
 
@@ -327,7 +328,7 @@ void parse_LOOP_SEN() {
     cout << "parse_LOOP_SEN" << endl;
     match_word(ID_WHILE);
     match_word(ID_LPAREN);
-    loop_stack.push(qua_num);
+    loop_start_stack.push(qua_num);
     pair<int, pair<string, string>> args = parse_CONDITION();
     switch (args.first) {
         case ID_EQ:
@@ -358,6 +359,7 @@ void parse_LOOP_SEN() {
     }
     qua[qua_num].arg1 = args.second.first;
     qua[qua_num].arg2 = args.second.second;
+    loop_stack.push(qua_num);
     qua_num++;
     match_word(ID_RPAREN);
     match_word(ID_DO);
@@ -368,7 +370,9 @@ void parse_LOOP_SEN() {
     qua[qua_num].op = "GOTO";
     qua[qua_num].arg1 = "";
     qua[qua_num].arg2 = "";
-    qua[qua_num].res = "(" + to_string(loop_pos+1) + ")";
+    int loop_start_pos = loop_start_stack.top();
+    loop_start_stack.pop();
+    qua[qua_num].res = "(" + to_string(loop_start_pos+1) + ")";
     qua_num++;
     qua[qua_num].op = "";
     qua[qua_num].arg1 = "";
