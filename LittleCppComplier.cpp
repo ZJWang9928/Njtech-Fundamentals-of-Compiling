@@ -498,7 +498,7 @@ string parse_FACTOR() {
     }else{
         cout << "******************** Error *******************" << endl;
         cout << "Line " << cur_line << ": " << endl;
-        cout << "Not a factor! Must be a identifier, a constant or an expression!" << endl;
+        cout << "Not a factor! Must be an identifier, a constant or an expression!" << endl;
         // exit(0);
         have_error = true;
         cout << "******************** Error *******************" << endl;
